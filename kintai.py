@@ -14,7 +14,8 @@ import time
 (ShowCardEvent, SHOW_CARD_EVENT) = wx.lib.newevent.NewEvent()
 (GoneCardEvent, GONE_CARD_EVENT) = wx.lib.newevent.NewEvent()
 # edyカードのPMM
-edy_pmm = '0120220427674eff'
+red_edy_pmm = '0120220427674eff'
+blue_edy_pmm = '03014B024F4993FF'
 
 class TagReader(threading.Thread):
 
@@ -38,7 +39,7 @@ class TagReader(threading.Thread):
 
        # 異なるカードエラー処理
         current_card_pmm = binascii.hexlify(tag.pmm)
-        if current_card_pmm != edy_pmm:
+        if current_card_pmm != red_edy_pmm and current_card_pmm != blue_edy_pmm:
             return
 
         (idm, pmm) = tag.polling(system_code=0xFE00)
@@ -70,6 +71,7 @@ class TagReader(threading.Thread):
         wx.PostEvent(self.wx_frame, GoneCardEvent())
 
 
+
 class Frame(wx.Frame):
 
     def __init__(self, title):
@@ -89,6 +91,15 @@ class Frame(wx.Frame):
         font = wx.Font(30, wx.DECORATIVE, wx.NORMAL, wx.NORMAL)
         self.text.SetFont(font)
 
+        #時間表示
+        self.current_time = wx.StaticText(topPanel, label=time.strftime('%Y/%m/%d %H:%M:%S'), pos=(150, 30))
+        #wx.Timer update() を１秒間隔で呼び出す
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.update)
+        self.timer.Start(1000)  # とりあえず１秒(1000ms) 間隔
+        self.font = wx.Font(25, wx.DECORATIVE, wx.NORMAL, wx.NORMAL)
+        self.current_time.SetFont(font)
+        
         # touch handler呼び出す
         self.Bind(SHOW_CARD_EVENT, self.show_card_event)
 
@@ -115,9 +126,19 @@ class Frame(wx.Frame):
         register_msg = (return_data['output'])[-11:]
         self.text.SetLabel(start_time + '\n' + greeting + '\n'
                            + stuff_name + '\n' + register_msg)
+        self.text.SetForegroundColour((9, 91, 254)) # set text color
 
     def gone_card_event(self, event):
+        self.text.SetForegroundColour((255,0,0)) # 赤色
         self.text.SetLabel("セキュリティカードをかざして\nください")
+
+    # 1秒間隔で呼ばれる関数
+    def update(self, event):
+        # 時刻が更新していたときだけ描画する
+        current_label = self.current_time.GetLabel()
+        new_label = time.strftime('%Y/%m/%d %H:%M:%S')
+        if current_label != new_label:
+            self.current_time.SetLabel(new_label)
 
 
 app = wx.App()
