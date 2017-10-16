@@ -95,12 +95,12 @@ class Frame(wx.Frame):
         self.text.SetFont(font)
 
         # 時間表示
-        self.current_time = wx.StaticText(topPanel, label=time.strftime('%Y/%m/%d %H:%M'), pos=(150, 30))
+        self.current_time = wx.StaticText(topPanel, label=time.strftime('%Y/%m/%d %H:%M'), pos=(210, 30))
         # wx.Timer update() を１秒間隔で呼び出す
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update)
         self.timer.Start(1000)  # とりあえず１秒(1000ms) 間隔
-        self.font = wx.Font(25, wx.DECORATIVE, wx.NORMAL, wx.NORMAL)
+        self.font = wx.Font(23, wx.DECORATIVE, wx.NORMAL, wx.NORMAL)
         self.current_time.SetFont(font)
 
         # touch handler呼び出す
@@ -115,7 +115,7 @@ class Frame(wx.Frame):
         icon = wx.EmptyIcon()
         icon.CopyFromBitmap(wx.Bitmap('image/raspberry.png', wx.BITMAP_TYPE_ANY))
         self.SetIcon(icon)
-        self.ShowFullScreen(True)
+	self.ShowFullScreen(True)
 
     #escでアプリを終了
     def onKey(self, event):
