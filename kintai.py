@@ -59,7 +59,7 @@ class TagReader(threading.Thread):
         # request post 送信
         headers = {'content-type': 'application/json'}
         url = \
-            'https://www.pi-pe.co.jp/api/service/custom_program/run/request'
+            'https:/＊＊/api/service/custom_program/run/request'
         post_data = \
             'spiral_api_token=00011BJhzZAH816d6a60edcb092d078555377b47f8454a62a55e&title=tc_register&arg=register&arg=' \
             + edy_num
